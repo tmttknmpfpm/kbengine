@@ -47,6 +47,7 @@ private:
 	bool completed_;
 	std::vector<Network::Bundle*> bufferedSendToCellappMessages_;
 	bool startForward_;
+	uint64 createTime_;
 };
 
 class BaseMessagesForwardClientHandler : public Task
@@ -68,12 +69,17 @@ public:
 		return cellappID_;
 	}
 
+	void cellappID(COMPONENT_ID cid) {
+		cellappID_ = cid;
+	}
+
 private:
 	Base* pBase_;
 	bool completed_;
 	std::vector<Network::Bundle*> bufferedSendToClientMessages_;
 	bool startForward_;
 	COMPONENT_ID cellappID_;
+	uint64 createTime_;
 };
 
 }

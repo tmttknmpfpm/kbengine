@@ -99,8 +99,15 @@ ServerApp::~ServerApp()
 void ServerApp::shutDown(float shutdowntime)
 {
 	if(pShutdowner_ == NULL)
+	{
 		pShutdowner_ = new Shutdowner(this);
-
+	}
+	else
+	{
+		WARNING_MSG(fmt::format("ServerApp::shutDown:  In shuttingdown!\n"));
+		return;
+	}
+	
 	pShutdowner_->shutdown(shutdowntime < 0.f ? g_kbeSrvConfig.shutdowntime() : shutdowntime, 
 		g_kbeSrvConfig.shutdownWaitTickTime(), dispatcher_);
 }
@@ -145,10 +152,10 @@ bool ServerApp::installSignals()
 //-------------------------------------------------------------------------------------		
 bool ServerApp::initialize()
 {
-	if(!initThreadPool())
+	if (!installSignals())
 		return false;
 
-	if(!installSignals())
+	if(!initThreadPool())
 		return false;
 	
 	if(!loadConfig())
@@ -161,6 +168,10 @@ bool ServerApp::initialize()
 		return false;
 
 	bool ret = initializeEnd();
+
+	// 最后仍然需要设置一次，避免期间被其他第三方库修改
+	if (!installSignals())
+		return false;
 
 #ifdef ENABLE_WATCHERS
 	return ret && initializeWatcher();
@@ -257,7 +268,7 @@ void ServerApp::handleTimeout(TimerHandle, void * arg)
 //-------------------------------------------------------------------------------------
 void ServerApp::handleTimers()
 {
-	AUTO_SCOPED_PROFILE("callTimers");
+	AUTO_SCOPED_PROFILE("callScriptTimers");
 	timers().process(g_kbetime);
 }
 
@@ -339,12 +350,12 @@ void ServerApp::onRemoveComponent(const Components::ComponentInfos* pInfos)
 	else if (pInfos->componentType == CELLAPPMGR_TYPE)
 	{
 		if (g_componentType == CELLAPP_TYPE)
-			this->shutDown(0.f);
+			this->shutDown(1.f);
 	}
 	else if (pInfos->componentType == BASEAPPMGR_TYPE)
 	{
 		if (g_componentType == BASEAPP_TYPE)
-			this->shutDown(0.f);
+			this->shutDown(1.f);
 	}
 }
 
@@ -430,6 +441,8 @@ void ServerApp::onAppActiveTick(Network::Channel* pChannel, COMPONENT_TYPE compo
 		if(pChannel->isExternal())
 			return;
 	
+	pChannel->updateLastReceivedTime();
+	
 	if(componentType != CONSOLE_TYPE && componentType != CLIENT_TYPE)
 	{
 		Components::ComponentInfos* cinfos = 
@@ -444,10 +457,6 @@ void ServerApp::onAppActiveTick(Network::Channel* pChannel, COMPONENT_TYPE compo
 		}
 
 		cinfos->pChannel->updateLastReceivedTime();
-	}
-	else
-	{
-		pChannel->updateLastReceivedTime();
 	}
 
 	//DEBUG_MSG("ServerApp::onAppActiveTick[%x]: %s:%"PRAppID" lastReceivedTime:%"PRIu64" at %s.\n", 
@@ -471,7 +480,7 @@ void ServerApp::lookApp(Network::Channel* pChannel)
 	if(pChannel->isExternal())
 		return;
 
-	DEBUG_MSG(fmt::format("ServerApp::lookApp: {}\n", pChannel->c_str()));
+	//DEBUG_MSG(fmt::format("ServerApp::lookApp: {}, componentID={}\n", pChannel->c_str(), g_componentID));
 
 	Network::Bundle* pBundle = Network::Bundle::createPoolObject();
 	
@@ -483,6 +492,7 @@ void ServerApp::lookApp(Network::Channel* pChannel)
 	(*pBundle) << istate;
 
 	pChannel->send(pBundle);
+	//DEBUG_MSG(fmt::format("ServerApp::lookApp: response! componentID={}\n", g_componentID));
 }
 
 //-------------------------------------------------------------------------------------

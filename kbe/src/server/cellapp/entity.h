@@ -157,7 +157,7 @@ public:
 	/**
 		脚本获取controlledBy属性
 	*/
-	INLINE bool isControlledNotSelfCleint() const;
+	INLINE bool isControlledNotSelfClient() const;
 	INLINE EntityMailbox* controlledBy() const;
 	INLINE void controlledBy(EntityMailbox* baseMailbox);
 	DECLARE_PY_GETSET_MOTHOD(pyGetControlledBy, pySetControlledBy);
@@ -537,6 +537,7 @@ public:
 	*/
 	void installCoordinateNodes(CoordinateSystem* pCoordinateSystem);
 	void uninstallCoordinateNodes(CoordinateSystem* pCoordinateSystem);
+	void onCoordinateNodesDestroy(EntityCoordinateNode* pEntityCoordinateNode);
 
 	/**
 		获取entity位置朝向在某时间是否改变过

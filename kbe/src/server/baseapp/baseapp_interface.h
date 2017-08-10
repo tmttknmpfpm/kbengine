@@ -277,12 +277,22 @@ NETWORK_INTERFACE_DECLARE_BEGIN(BaseappInterface)
 									std::string,									email)
 
 	// 请求绑定email申请的回调
-	BASEAPP_MESSAGE_DECLARE_ARGS5(onReqAccountBindEmailCB,							NETWORK_VARIABLE_MESSAGE,
+	BASEAPP_MESSAGE_DECLARE_ARGS5(onReqAccountBindEmailCBFromDBMgr,					NETWORK_VARIABLE_MESSAGE,
 									ENTITY_ID,										entityID,
 									std::string,									accountName,
 									std::string,									email,
 									SERVER_ERROR_CODE,								failedcode,
 									std::string,									code)
+
+	// baseapp请求绑定email（返回时需要找到loginapp的地址）
+	BASEAPP_MESSAGE_DECLARE_ARGS7(onReqAccountBindEmailCBFromBaseappmgr,			NETWORK_VARIABLE_MESSAGE,
+									ENTITY_ID,										entityID,
+									std::string,									accountName,
+									std::string,									email,
+									SERVER_ERROR_CODE,								failedcode,
+									std::string,									code,
+									std::string,									loginappCBHost,
+									uint16,											loginappCBPort)
 
 	// 请求修改密码
 	BASEAPP_MESSAGE_EXPOSED(reqAccountNewPassword)
@@ -328,16 +338,14 @@ NETWORK_INTERFACE_DECLARE_BEGIN(BaseappInterface)
 								DBID,												dbid)
 
 	// entity请求迁移到另一个cellapp上的space过程开始
-	BASE_MESSAGE_DECLARE_ARGS1(onMigrationCellappStart,								NETWORK_FIXED_MESSAGE,
-								COMPONENT_ID,										cellAppID)
-
-	// entity请求迁移到另一个cellapp上的space过程到达目的cellapp
-	BASE_MESSAGE_DECLARE_ARGS1(onMigrationCellappArrived,							NETWORK_FIXED_MESSAGE,
-								COMPONENT_ID,										cellAppID)
+	BASE_MESSAGE_DECLARE_ARGS2(onMigrationCellappStart,								NETWORK_FIXED_MESSAGE,
+								COMPONENT_ID,										sourceCellAppID,
+								COMPONENT_ID,										targetCellAppID)
 		
 	// entity请求迁移到另一个cellapp上的space过程结束
-	BASE_MESSAGE_DECLARE_ARGS1(onMigrationCellappEnd,								NETWORK_FIXED_MESSAGE,
-								COMPONENT_ID,										cellAppID)
+	BASE_MESSAGE_DECLARE_ARGS2(onMigrationCellappEnd,								NETWORK_FIXED_MESSAGE,
+								COMPONENT_ID,										sourceCellAppID,
+								COMPONENT_ID,										targetCellAppID)
 
 	//--------------------------------------------Proxy---------------------------------------------------------
 	/**

@@ -1232,6 +1232,11 @@ bool ServerConfig::loadConfig(std::string fileName)
 			_botsInfo.tcp_SOMAXCONN = xml->getValInt(node);
 		}
 
+		node = xml->enterNode(rootNode, "forceInternalLogin");
+		if (node != NULL){
+			_botsInfo.forceInternalLogin = (xml->getValStr(node) == "true");
+		}
+
 		node = xml->enterNode(rootNode, "telnet_service");
 		if(node != NULL)
 		{
@@ -1531,7 +1536,7 @@ void ServerConfig::updateInfos(bool isPrint, COMPONENT_TYPE componentType, COMPO
 		if (info.ids_criticallyLowSize > getDBMgr().ids_increasing_range / 2)
 		{
 			info.ids_criticallyLowSize = getDBMgr().ids_increasing_range / 2;
-			ERROR_MSG(fmt::format("kbengine[_defs].xml->cellapp->ids->criticallyLowSize > dbmgr->ids->increasing_range / 2, Force adjustment to criticallyLowSize({})\n",
+			ERROR_MSG(fmt::format("kbengine[_defs].xml->baseapp->ids->criticallyLowSize > dbmgr->ids->increasing_range / 2, Force adjustment to criticallyLowSize({})\n",
 				info.ids_criticallyLowSize));
 		}
 

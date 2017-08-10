@@ -7,7 +7,7 @@ KBEngine
 
 ## Homepage
 
-	http://www.kbengine.org
+	http://kbengine.org
 
 
 ## Releases
@@ -26,7 +26,7 @@ KBEngine
 
 ## Docs
 
-	Docs		: http://www.kbengine.org/docs/
+	Docs		: http://kbengine.org/docs/
 	API		: https://github.com/kbengine/kbengine/tree/master/docs
 
 
@@ -37,6 +37,10 @@ KBEngine
 	BBS		: http://bbs.kbengine.org
 	Maillist	: https://groups.google.com/d/forum/kbengine_maillist
 
+## Stresstest
+
+	https://www.youtube.com/watch?v=sWtk3CfxyGY
+	http://v.youku.com/v_show/id_XMjgyMjM0MTYwNA==.html?spm=a2h3j.8428770.3416059.1
 
 ## What is KBEngine?
 
